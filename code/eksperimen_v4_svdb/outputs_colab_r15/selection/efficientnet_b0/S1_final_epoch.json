@@ -1,0 +1,39 @@
+{
+  "arch": "efficientnet_b0",
+  "scenario": "S1",
+  "rule": "argmax_mean_validation_macro_f1_common_epochs",
+  "tie_tolerance": 0.0001,
+  "selected_epoch": 5,
+  "selected_mean_macro_f1": 0.8713153046601618,
+  "common_epochs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "fold_checkpoint_sha256": {
+    "0": "2a2add42810c745086a3155414a5b1bc624eb53d413776855e8a23947fcef8f0",
+    "1": "e27759efdf6c3f5a21d2772084244e1d9714ff5a4d730e235c240d91c665893c",
+    "2": "8973e38faf04a2a9fd0ec15aa67741298bf301ef51c4a3e028099be9c69d0693",
+    "3": "eb2b573313d2f512276534327847a7410eb473a70ab6f84a0161dc472e92bb16",
+    "4": "2918be169c073180931f9400ea201f437d099d4cb52f7e24ed4b1a140fe90c97"
+  },
+  "protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d",
+  "method_hash": "d7f73001bb35e08774efdbfb9bdb487fadf4dff0a7b3c5bcdc6df48966c71569"
+}

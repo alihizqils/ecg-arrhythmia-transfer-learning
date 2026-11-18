@@ -1,0 +1,279 @@
+# Konfigurasi dasar eksperimen.
+#
+# Berkas ini memuat seluruh parameter default. Konfigurasi lain di
+# configs/windowing/ dan configs/scenarios/ hanya menimpa sebagian kunci di
+# sini, sehingga satu-satunya sumber kebenaran parameter tetap satu tempat.
+
+project:
+  name: ecg-tl-arrhythmia
+  seed: 42
+
+paths:
+  data_raw: data/raw
+  data_interim: data/interim
+  data_processed: data/processed
+  runs: outputs/runs
+  tables: outputs/tables
+  figures: outputs/figures
+  models: outputs/models
+  features: outputs/features
+
+# Lima kelas target. Urutan indeks kelas mengikuti daftar ini dan dipakai
+# konsisten pada seluruh matriks kebingungan serta vektor bobot.
+classes: [N, S, V, AF, VT]
+
+databases:
+  # fs = laju sampling asli sesuai halaman resmi PhysioNet. Dipakai sebagai
+  # asertsi saat membaca header, bukan sebagai asumsi buta.
+  mitdb:
+    expected_records: 48
+    expected_fs: 360
+    has_beat_annotations: true
+    annotation_ext: atr
+  afdb:
+    # 25 rekaman terdaftar, tetapi 00735 dan 03665 hanya berisi anotasi tanpa
+    # berkas sinyal sehingga tidak dapat dipakai.
+    expected_records: 23
+    expected_fs: 250
+    has_beat_annotations: false
+    annotation_ext: atr
+  vfdb:
+    expected_records: 22
+    expected_fs: 250
+    has_beat_annotations: false
+    annotation_ext: atr
+
+preprocessing:
+  # Seluruh sumber diseragamkan ke laju sampling ini. Nilai 250 Hz mengikuti
+  # Bechinia2024 dan sekaligus merupakan laju asli afdb serta vfdb.
+  target_fs: 250
+  bandpass:
+    enabled: true
+    low_hz: 0.5
+    # Bechinia2024 memakai 50 Hz. Di sini dipakai 40 Hz karena bandwidth
+    # perekaman afdb hanya sekitar 0,1-40 Hz, sehingga konten di atas 40 Hz
+    # yang hanya ada pada mitdb berpotensi menjadi penanda database yang
+    # dibaca model sebagai pintasan, bukan sebagai patologi.
+    high_hz: 40.0
+    order: 4
+    zero_phase: true
+  # Normalisasi min-max dihitung per jendela, sesuai Persamaan 2.5 proposal.
+  normalization: minmax
+
+windowing:
+  duration_s: 10.0
+  # Tumpang tindih seragam untuk SEMUA kelas. Ini parameter segmentasi, bukan
+  # teknik penyeimbangan kelas: karena stride sama untuk setiap kelas, rasio
+  # ketidakseimbangan alami tetap terjaga. Batasan masalah proposal yang
+  # membatasi penanganan ketidakseimbangan hanya pada pembobotan kelas
+  # tetap berlaku.
+  overlap: 0.5
+  # Urutan preferensi nama kanal. Hanya mitdb yang memiliki MLII; untuk afdb
+  # dan vfdb pemilihan jatuh ke kanal pertama yang tersedia.
+  channel_preference: [MLII, ML II, ECG1, ECG, II, V5]
+
+labeling:
+  # Jumlah minimum detak ektopik dalam satu jendela agar jendela dilabeli
+  # sebagai kelas ektopik tersebut.
+  #
+  # Nilai 1 dipilih berdasarkan pengukuran, bukan asumsi. Perbandingan pada data
+  # nyata (lihat outputs/tables/labeling_threshold_sweep.csv):
+  #
+  #   ambang   S (rekaman)   V (rekaman)
+  #        1   1.180 (24)    3.772 (36)
+  #        2     745 (16)    2.541 (26)
+  #        3     565 (14)    1.841 (21)
+  #
+  # Ambang 2 menyusutkan kelas S menjadi 16 rekaman saja, terlalu tipis untuk
+  # dibagi lima lipatan sekaligus menyisihkan sebagian untuk data uji.
+  #
+  # Menaikkan ambang juga tidak menambah kemurnian kelas N: jendela dengan satu
+  # detak ektopik sebelumnya dibuang sebagai tidak konsisten, bukan dilabeli N.
+  # Jadi ambang 1 memulihkan jendela yang tadinya terbuang tanpa mencemari N.
+  #
+  # Secara klinis ambang 1 juga lebih tepat. Satu kontraksi prematur terisolasi
+  # dalam rekaman 10 detik memang merupakan temuan ektopik, dan itulah yang akan
+  # dilaporkan pembaca EKG. Menuntut dua detak justru mempersempit definisi
+  # kelas menjadi khusus pola ektopik yang sering.
+  min_ectopic_beats:
+    V: 1
+    S: 1
+  # Jendela yang bersinggungan dengan episode derau atau asistol dibuang.
+  drop_noise_overlap: true
+  # Jumlah minimum detak dalam satu jendela agar jendela dianggap layak.
+  min_beats_per_window: 3
+  # Pemetaan aux string anotasi ritme ke kelas target.
+  #
+  # Label ritme yang TIDAK tercantum di sini bukan berarti jendelanya dibuang;
+  # jendela tersebut jatuh ke aturan tingkat detak. Ini penting untuk label
+  # seperti B (bigemini ventrikel) dan T (trigemini) di mitdb, yang jendelanya
+  # memuat banyak detak V sehingga seharusnya menjadi kelas V, bukan hilang.
+  rhythm_to_class:
+    VT: VT
+    VFL: VT
+    VF: VT
+    VFIB: VT
+    AFIB: AF
+    AFL: AF
+    N: N
+    NSR: N
+  # Aux string yang menyebabkan jendela dibuang tanpa dievaluasi lebih lanjut.
+  # PM (irama pacu jantung) masuk daftar ini karena vfdb tidak memiliki anotasi
+  # detak, sehingga tidak ada mekanisme lain untuk mengenalinya.
+  rhythm_reject: [NOISE, ASYS, PM]
+  # Label yang bersifat interupsi, bukan perubahan ritme. Menurut dokumentasi
+  # vfdb, ritme sebelumnya berlanjut selama episode (NOISE dan berakhir pada
+  # anotasi berikutnya. Jadi (NOISE tidak boleh dianggap mengganti ritme.
+  rhythm_interruption: [NOISE]
+  # Proporsi minimum jendela yang harus tercakup satu kelas ritme agar jendela
+  # dilabeli kelas tersebut. Pengurungan penuh (nilai 1,0) terlalu ketat:
+  # episode VT di mitdb rata-rata hanya 3,5 detik dan VFL di vfdb 7,1 detik,
+  # keduanya lebih pendek dari jendela 10 detik.
+  min_rhythm_coverage: 0.5
+  # Pemetaan simbol detak mitdb ke kelas AAMI.
+  beat_aami:
+    N: [N, L, R, e, j]
+    S: [A, a, J, S]
+    V: [V, E]
+    F: [F]
+    Q: ["/", f, Q]
+
+sampling:
+  # Batas maksimum jendela yang diambil dari satu rekaman untuk satu kelas.
+  # Tanpa batas ini, satu rekaman afdb berdurasi 10 jam menghasilkan ribuan
+  # jendela dan mendominasi seluruh dataset.
+  max_windows_per_record_per_class: 200
+
+image:
+  # Lebar 448 dan tinggi 224 ditetapkan berdasarkan hasil Skenario 0, bukan
+  # asumsi. Pada jendela 10 detik, lebar 224 piksel hanya memberi kerapatan 22,4
+  # piksel per detik sehingga kompleks QRS selebar sekitar dua piksel. Lebar 448
+  # menaikkan kerapatan menjadi 44,8 piksel per detik.
+  #
+  # Hasil Skenario 0 (MobileNetV2 backbone beku, 5 lipatan, rerata lintas tiga
+  # metode adaptasi kanal):
+  #
+  #   5 s   @ 224x224   44,8 px/s   macro-F1 0,5876
+  #   10 s  @ 224x448   44,8 px/s   macro-F1 0,5792   <- dipakai
+  #   10 s  @ 224x224   22,4 px/s   macro-F1 0,5598   <- konfigurasi awal proposal
+  #   2,5 s @ 224x224   89,6 px/s   macro-F1 0,5594
+  #
+  # Selisih terhadap 5 detik hanya 0,0084, jauh di dalam simpangan antar lipatan
+  # yang berkisar 0,042 sampai 0,059, sehingga keduanya tidak dapat dibedakan
+  # secara statistik. Jendela 10 detik dipilih karena mempertahankan durasi yang
+  # menjadi konvensi dominan perekaman EKG 12-lead klinis: PTB-XL memuat 21.799
+  # rekaman dan Georgia G12EC memuat 10.344 rekaman, keduanya berdurasi 10 detik.
+  # Konfigurasi ini juga terbaik untuk kelas N dan AF.
+  width: 448
+  height: 224
+  line_width: 1
+  # Latar putih, garis hitam. Nilai piksel 8-bit.
+  background: 255
+  foreground: 0
+
+split:
+  test_size: 0.2
+  n_folds: 5
+  # Rekaman yang berasal dari subjek yang sama wajib dikelompokkan menjadi satu
+  # pasien, jika tidak pembagian per pasien tetap bocor.
+  #
+  # mitdb memuat 48 rekaman dari 47 subjek. Direktori resmi MIT-BIH menyatakan
+  # pada catatan rekaman 202 bahwa rekaman itu diambil dari tape analog yang sama
+  # dengan rekaman 201; keduanya juga tercatat laki-laki usia 68 dengan daftar
+  # obat identik (Digoxin, Hydrochlorthiazide, Inderal, KCl).
+  patient_aliases:
+    mitdb:
+      "201": mitdb/201+202
+      "202": mitdb/201+202
+
+training:
+  batch_size: 32
+  max_epochs: 60
+  num_workers: 4
+  amp: true
+  optimizer: adamw
+  weight_decay: 1.0e-4
+  scheduler: cosine
+  early_stopping:
+    metric: macro_f1
+    mode: max
+    patience: 10
+  # Learning rate mengikuti Wei2022, yang memakai EfficientNet-B0 dengan
+  # pembobotan kelas sehingga paling dekat dengan setup penelitian ini.
+  lr:
+    frozen: 1.0e-3
+    scratch: 1.0e-3
+    finetune_backbone: 1.0e-5
+    finetune_head: 1.0e-4
+
+class_weighting:
+  # none          : tanpa bobot (Skenario 2)
+  # proposal      : eta_i = 1 - p_i, sesuai Persamaan 2.7 proposal (Ullah2023)
+  # inverse_capped: bobot inverse frequency dengan rasio maksimum tau
+  scheme: none
+  tau: 10.0
+
+models:
+  efficientnet_b0:
+    torchvision_name: efficientnet_b0
+    feature_dim: 1280
+  mobilenet_v2:
+    torchvision_name: mobilenet_v2
+    feature_dim: 1280
+  shufflenet_v2_x1_0:
+    torchvision_name: shufflenet_v2_x1_0
+    feature_dim: 1024
+
+architecture:
+  # Cara mengadaptasi konvolusi pertama dari tiga kanal RGB menjadi satu kanal
+  # grayscale:
+  #   sum       menjumlahkan bobot ketiga kanal. Mempertahankan besaran keluaran
+  #             sehingga statistik normalisasi batch pretrained tetap cocok.
+  #   mean      merata-ratakan bobot. Ini bunyi literal istilah weight averaging
+  #             pada Bechinia2024 dan proposal, tetapi menghasilkan keluaran
+  #             sepertiga besaran semula.
+  #   replicate mempertahankan tiga kanal masukan dengan menggandakan citra
+  #             grayscale. Tanpa pembedahan, tetapi konvolusi pertama tiga kali
+  #             lebih mahal.
+  # Ketiganya dibandingkan secara empiris pada Skenario 0, dan hasilnya
+  # menunjukkan perbedaannya tidak berarti: rerata macro-F1 lintas konfigurasi
+  # adalah mean 0,5762, sum 0,5693, replicate 0,5690. Selisih terbesar 0,0072,
+  # sekitar sepersepuluh simpangan antar lipatan.
+  #
+  # Metode `mean` dipilih karena sesuai bunyi literal proposal dan Bechinia2024,
+  # sekaligus mencatat skor rerata tertinggi meski selisihnya berada di dalam
+  # derau. Argumen matematis yang memihak `sum` tetap benar secara teoretis,
+  # tetapi ternetralkan pada jalur backbone beku karena fitur distandarkan
+  # sebelum head linier dilatih.
+  #
+  # Catatan verifikasi: `sum` dan `replicate` menghasilkan angka nyaris identik
+  # hingga tiga desimal pada seluruh metrik per kelas, tepat seperti yang
+  # diprediksi analisis matematis. Kesesuaian itu menjadi bukti bahwa
+  # implementasi adaptasi bobot sudah benar.
+  grayscale_init: mean
+  in_channels: 1
+  # Dropout pada head klasifikasi Skenario 1 dan 4 (dilatih dari citra
+  # langsung), sama untuk ketiga arsitektur.
+  #
+  # Sebelumnya TIDAK seragam: EfficientNet-B0 dan MobileNetV2 mewarisi
+  # Dropout(p=0,2) bawaan torchvision yang tidak tersentuh saat hanya lapisan
+  # Linear-nya diganti, sedangkan ShuffleNetV2 (head `fc` tunggal) tidak punya
+  # dropout sama sekali. Nilai 0,2 dipilih di sini karena itulah nilai bawaan
+  # torchvision untuk EfficientNet-B0/MobileNetV2, sehingga perilaku kedua
+  # arsitektur itu tidak berubah dari eksperimen sebelumnya; yang berubah
+  # hanya ShuffleNetV2 kini ikut mendapat dropout yang sama.
+  head_dropout: 0.2
+  # Pada mode finetune, "all" membuka seluruh backbone mengikuti Wei2022.
+  #
+  # Membuka sejumlah blok teratas tidak setara antar arsitektur: membuka dua
+  # blok menghasilkan 28 persen parameter terlatih pada EfficientNet-B0 tetapi
+  # 78 persen pada ShuffleNetV2, karena ShuffleNetV2 hanya memiliki lima blok.
+  # Nilai "all" membuat ketiga arsitektur diperlakukan identik.
+  unfreeze_blocks: all
+
+efficiency:
+  # Jumlah iterasi pemanasan dan pengukuran untuk tolok ukur waktu inferensi.
+  warmup_iters: 20
+  measure_iters: 100
+  batch_size: 1
+  devices: [cuda, cpu]

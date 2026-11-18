@@ -1,0 +1,155 @@
+# Aturan metode training/evaluasi V4. Fitur, optimizer, dan arsitektur dasar
+# diwarisi dari eksperimen final (final_pipeline.py, hierarchical_v4.yaml);
+# head ditambah expert tabular tingkat window (bagian `head`).
+version: metode_v4
+# S1: backbone ImageNet beku, tanpa class weighting (tau=1).
+# S2: backbone ImageNet beku, class weighting (tau=2).
+# S3: full fine-tuning dari checkpoint S2 pada fold/final yang sama (tau=2).
+scenarios: [S1, S2, S3]
+tau: {S1: 1.0, S2: 2.0, S3: 2.0}
+
+label_validity:
+  # Revisi 9 Nov 2026 (pilot fold 1 dan fold kontrol 3, sebelum holdout dibuka).
+  # Kelas N (dan kelas tingkat beat S/V) didefinisikan oleh anotasi jenis beat.
+  # AFDB dan VFDB hanya beranotasi ritme, sehingga window "N" di sana tidak
+  # terverifikasi bebas beat S/V: window N dengan >= 10% beat prematur 33,1%
+  # (VFDB) dan 14,4% (AFDB) vs 4,5% (MITDB). Window N dari database tanpa
+  # anotasi beat dikeluarkan dari development dan holdout; database tersebut
+  # tetap menyumbang AF/VT. Aturan berbasis ketersediaan anotasi, sama untuk
+  # semua fold dan holdout. Split pasien tidak berubah.
+  # Versi sebelumnya diarsipkan di arsip_revisi8_label_n_semua_database/.
+  rule: n_windows_only_from_beat_annotated_databases
+  beat_annotated_databases: [mitdb, svdb]
+  classes_requiring_beat_annotation: [N]
+
+sampling:
+  # Revisi 3 Nov 2026 (pilot development, sebelum holdout dibuka). Sampler
+  # pasien-seimbang warisan menggeser porsi kelas begitu SVDB menambah banyak
+  # pasien S berwindow sedikit (S 5,7% -> 15,6%, AF 22,9% -> 12,6% sampel),
+  # sehingga AF banyak diprediksi S. Aturan baru: porsi kelas mengikuti data,
+  # keseimbangan pasien hanya di dalam kelas (V4Experiment.sampling_weights).
+  rule: class_prior_preserving_patient_balanced_within_class
+
+head:
+  # Revisi development 4 Nov 2026 (fold 0, sebelum holdout dibuka). Embedding
+  # ImageNet beku hampir tidak membawa informasi S (proksi: F1 S 0,01), sedangkan
+  # 64 fitur RR/fisiologi/gelombang P tingkat window membawanya (proksi: 0,41),
+  # padahal pada head warisan fitur itu tidak ikut memutuskan N/S/V. Expert tabular
+  # (MLP 64-64-5, lapisan akhir nol) dijumlahkan ke log-probabilitas akhir dan
+  # diberi loss sendiri. lambda sama dengan loss bantu lain (lambda_global/local).
+  # Revisi 5 Nov 2026 (pilot fold 1, sebelum holdout dibuka): expert tabular
+  # mendorong window VT ke N (expert saja F1 VT 0,29), sehingga VT tidak stabil
+  # antar-epoch. Kontribusi expert dikalikan 1 - P(VT) jalur warisan (detach).
+  # Versi tanpa gate diarsipkan di arsip_head_expert_tanpa_gate/.
+  # Revisi 6 Nov 2026 (pilot fold 1, sebelum holdout dibuka): masukan expert
+  # ditambah 9 fitur morfologi relatif template beat tingkat rekaman
+  # (v4_record_template.py; perluasan baseline rekaman A2 dari RR ke morfologi).
+  # Proksi GBM 5 fold development: Macro-F1 0,745 -> 0,763, S +0,03, AF +0,05.
+  # Versi gate VT tanpa fitur ini diarsipkan di arsip_head_expert_gate_vt/.
+  # Revisi 7 Nov 2026 (pilot fold 1, sebelum holdout dibuka): 4 fitur template
+  # rekaman per beat (korelasi QRS/P vs template rekaman, RR/median rekaman,
+  # korelasi P beat sebelumnya) masuk proyeksi tabular cabang beat (N/S/V).
+  # Proksi GBM tingkat beat 5 fold: F1 beat S 0,435 -> 0,466 (naik di 5 fold),
+  # V 0,864 -> 0,886. Versi Revisi 6 diarsipkan di arsip_template_rekaman_window/.
+  rule: window_tabular_expert_product_of_experts_vt_gated_record_template_window_and_beat
+  # Revisi 8 Nov 2026 (pilot fold 1, sebelum holdout dibuka): pada checkpoint
+  # Revisi 7, expert benar pada window AF yang salah oleh jalur citra (mitdb/203:
+  # expert AF 144/200, jalur citra V 141/200; vfdb/609: expert AF 160/200,
+  # jalur citra N 183/200), tetapi kalah suara; gate VT (1 - P_VT) masih
+  # membiarkan expert menggeser 20 window VT vfdb/611 ke N. Bobot expert 2 dan
+  # gate (1 - P_VT)^4. Dipilih dari estimasi offline fold 1 (grid kecil
+  # {1; 1,5; 2} x {1; 4}); wajib dikonfirmasi pada fold lain dan holdout.
+  # Versi Revisi 7 diarsipkan di arsip_template_rekaman_beat/.
+  # Revisi 10 Nov 2026 (setelah Revisi 9, sebelum holdout dibuka): masukan expert
+  # ditambah 8 fitur RR antar-beat dominan (v4_record_template.DOMINANT_RR_NAMES).
+  # Kesalahan umum di fold 1 dan fold kontrol 3: window AF berisi banyak beat V
+  # diprediksi V. Fitur ini ditolak pada label lama, tetapi dengan label Revisi 9
+  # proksi GBM 5 fold naik di 4/5 fold (Macro 0,834 -> 0,839; tidak ada kelas
+  # turun > 0,01). Versi Revisi 9 diarsipkan di arsip_revisi9_label_valid/.
+  # Revisi 11 Nov 2026 (sebelum holdout dibuka): masukan expert
+  # ditambah 9 fitur template rekaman pada lead EKG kedua dari rekaman yang sama
+  # (v4_second_lead.py; citra tetap satu lead). Proksi GBM 5 fold, 3 seed: Macro
+  # 0,807 -> 0,820 (naik di 4/5 fold), S 0,615 -> 0,642, tidak ada kelas turun.
+  # Versi per beat tidak lolos proksi sehingga tidak dipakai. Versi Revisi 10
+  # diarsipkan di arsip_revisi10_satu_lead/.
+  # Revisi 14 (7 Nov 2026): fitur ritme lokal kausal
+  # E1 (RR relatif terhadap median 5/10/20 RR sebelumnya, perubahan RR, variabilitas lokal) dan
+  # konteks 7 beat E3 (urutan RR relatif, deviasi P, kemiripan QRS, tren dan pola pendek-panjang)
+  # dari studi beat N/S (fase_e_ns/RINGKASAN_EKSPERIMEN_NS.md). Per beat -> cabang beat; agregat
+  # window -> expert tabular (v4_local_rhythm.py). Bukti development: ablasi beat N/S lolos (E1 5/5
+  # fold, E3 4/5 fold); proksi GBM window lima kelas F1 S 0,638 -> 0,691 (naik 5/5 fold), tidak ada
+  # kelas turun. E2/E4/E5/E6 tidak lolos dan tidak dipakai. Versi Revisi 12 identik dengan
+  # arsip_revisi12_ema/; run lokal Revisi 12 diarsipkan terpisah.
+  # Revisi 15 (8 Nov 2026): agregat window ditambah E2 (deviasi P) dan E4
+  # (gelombang T / aktivitas atrial tersembunyi). Proksi window lima kelas
+  # (fase_e_ns/hasil/proksi_window_ekstra/): F1 S 0,691 -> 0,703 (naik 4/5 fold), Macro naik 5/5, tidak ada
+  # kelas turun. Cabang beat tetap Revisi 14. Versi Revisi 14 diarsipkan di arsip_revisi14_ritme_lokal/.
+  window_extra_features: [dominant_beat_rr_irregularity, second_lead_record_template, local_rhythm_e1_context7_e3_e2_e4]
+  beat_extra_features: [local_rhythm_e1_context7_e3]
+  expert_weight: 2.0
+  vt_gate_power: 4.0
+  expert_hidden: 64
+  lambda_expert: 1.0
+
+ema:
+  # Revisi 12 Nov 2026 (sebelum holdout dibuka): prediksi
+  # Revisi 11 berosilasi antar-epoch (fold 1 Macro 0,79-0,86; VT 0,67-0,95),
+  # padahal metrik CV utama diambil pada satu epoch bersama E*. Estimasi offline
+  # dari probabilitas per epoch tersimpan (rata-rata prediksi 3/5 epoch terakhir):
+  # fold 1 Macro 0,839 -> 0,853/0,855, fold 3 0,822 -> 0,825/0,827, semua kelas
+  # naik, std antar-epoch fold 1 0,020 -> 0,006. Diterapkan sebagai EMA bobot
+  # (satu model, tanpa tambahan biaya inferensi). Waktu paruh 1,5 epoch ~ umur
+  # rata-rata jendela 3-5 epoch (hasil 3 dan 5 epoch hampir sama, tidak dipilih
+  # nilai terbaik). Decay per langkah optimizer, warmup min(decay, (1+t)/(10+t)).
+  # Versi Revisi 11 diarsipkan di arsip_revisi11_dua_lead/.
+  rule: exponential_moving_average_weights_for_validation_checkpoint_and_final
+  half_life_epochs: 1.5
+
+cv:
+  folds: 5
+  # Early stopping (patience dari hierarchical_v4.yaml) baru boleh menghentikan
+  # fold setelah epoch ini. Tujuannya: rentang epoch bersama kelima fold tidak
+  # terpotong oleh satu fold yang memuncak sangat awal (temuan eksperimen
+  # eksplorasi: epoch final selalu dibatasi <= 11 oleh satu fold).
+  min_epochs: {S1: 20, S2: 20}
+  # Probabilitas validasi setiap epoch disimpan agar seluruh metrik CV dapat
+  # dihitung pada epoch final bersama, bukan hanya Macro-F1.
+  save_epoch_probabilities: true
+
+final_epoch:
+  rule: argmax_mean_validation_macro_f1_common_epochs
+  tie_tolerance: 0.0001
+
+reporting:
+  # Metrik CV utama dihitung pada epoch final bersama E* (satu epoch untuk kelima
+  # fold), karena itulah epoch final model. Skor epoch terbaik per fold memuat
+  # bias seleksi (eksplorasi: 0,01-0,035 lebih tinggi) dan hanya pelengkap.
+  primary_cv_metric: macro_f1_at_selected_common_epoch
+  secondary_cv_metric: macro_f1_at_fold_best_epoch
+
+holdout:
+  # Alur per skenario: CV -> final model -> holdout. Metode seluruh skenario
+  # dikunci saat holdout pertama dibuka; setiap final model dievaluasi satu kali.
+  evaluate_once_per_model: true
+  lock_method_at_first_opening: true
+
+pilot:
+  arch: efficientnet_b0
+  scenario: S2
+  # Gerbang lanjut ke eksperimen penuh, hanya dari development.
+  gate_macro_f1_at_selected_epoch: 0.80
+  # Kriteria inti V4 (keputusan pengembangan, bukan perbandingan di paper): F1 S
+  # naik dan F1 N/V/AF/VT tidak turun (toleransi 0,01) terhadap rerata CV
+  # eksplorasi (outputs_v2) backbone dan skenario yang sama.
+  noninferiority_tolerance: 0.01
+  exploration_reference_f1:
+    efficientnet_b0:
+      S1: {N: 0.917, S: 0.477, V: 0.779, AF: 0.846, VT: 0.937}
+      S2: {N: 0.907, S: 0.512, V: 0.798, AF: 0.838, VT: 0.926}
+      S3: {N: 0.915, S: 0.510, V: 0.785, AF: 0.845, VT: 0.931}
+    mobilenet_v2:
+      S1: {N: 0.901, S: 0.411, V: 0.769, AF: 0.820, VT: 0.917}
+      S2: {N: 0.904, S: 0.519, V: 0.791, AF: 0.824, VT: 0.900}
+    shufflenet_v2_x1_0:
+      S1: {N: 0.905, S: 0.403, V: 0.809, AF: 0.836, VT: 0.913}
+      S2: {N: 0.908, S: 0.423, V: 0.803, AF: 0.840, VT: 0.909}

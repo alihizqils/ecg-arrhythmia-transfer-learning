@@ -1,0 +1,57 @@
+{
+  "status": "locked",
+  "locked_at_local_date": "2026-10-30",
+  "selection_partition": "development",
+  "holdout_used_for_selection": false,
+  "method": "A6 patient-balanced nonlinear standalone with original auxiliary losses",
+  "scenario_reference": "S3 tau=2",
+  "reference_backbone": "efficientnet_b0",
+  "mean_cv_macro_f1": 0.7963238176348788,
+  "median_best_epoch": 3,
+  "protocol_hash": "b9b5e2461dd2ea3857e80aa3a7f6cfa66971e6b9df9f7b4913c38e9940fed5d4",
+  "folds": [
+    {
+      "fold": 0,
+      "variant": "A6_PB_NONLINEAR_CONFIRMATION",
+      "macro_f1": 0.8350157418209833,
+      "best_epoch": 3,
+      "checkpoint_sha256": "4265e86b26413c28024d6323c0919c1fccb84512206aab50442470c501ad526a"
+    },
+    {
+      "fold": 1,
+      "variant": "A6_PB_NONLINEAR_CONFIRMATION",
+      "macro_f1": 0.8146813623364991,
+      "best_epoch": 6,
+      "checkpoint_sha256": "d615314ec57e3fce0a7554457d1d70110388b65d5a2e4835eb5763c55e05209c"
+    },
+    {
+      "fold": 2,
+      "variant": "A6_PB_LOCAL_NONLINEAR_STANDALONE",
+      "macro_f1": 0.7499784143170397,
+      "best_epoch": 3,
+      "checkpoint_sha256": "d08e0649925928f5b6f3ea741b4343d96ec2ab4eb114ab1f91890e5d6c8d2381"
+    },
+    {
+      "fold": 3,
+      "variant": "A6_PB_NONLINEAR_CONFIRMATION",
+      "macro_f1": 0.8244243993872338,
+      "best_epoch": 26,
+      "checkpoint_sha256": "cd916474ca61d7115c4b3e629065c97066aab90d68033fe053b123ef58156a97"
+    },
+    {
+      "fold": 4,
+      "variant": "A6_PB_LOCAL_NONLINEAR_STANDALONE",
+      "macro_f1": 0.7575191703126379,
+      "best_epoch": 1,
+      "checkpoint_sha256": "67100cd737a19681ea242dd69ea26c4ae7a5916b92ca99a71227be91d309ebbf"
+    }
+  ],
+  "rejected_after_lock": [
+    "matched slow fusion",
+    "independent global-local branches",
+    "global gate",
+    "mixed class-patient sampler",
+    "local auxiliary coefficient zero",
+    "class-balanced local auxiliary loss"
+  ]
+}

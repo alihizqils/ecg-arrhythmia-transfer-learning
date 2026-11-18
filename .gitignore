@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+data/raw/
+code/data/raw/
+code/data/processed/v4_svdb/records/
+*.pt
+*.pth
+outputs/

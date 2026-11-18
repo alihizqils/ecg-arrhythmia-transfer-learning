@@ -1,0 +1,11 @@
+{
+  "berkas": "spesialis_r15.npz",
+  "sha256": "bb1648e73ed35ed91abfcee285319f2f0b0575177141aa0841ce31cff0b3768c",
+  "n_window": 20019,
+  "reproduksi_PH_KL_selisih_maks": 2.9801144996177698e-08,
+  "sumber": {
+    "peluang_beat.npz": "7013f97e045f2d16f4ec9d763c83c9678eaf2040b349515ec75b56c3f79d047b",
+    "spec_U.npy": "fc68782d728f1b11f26e2b65e71a6deaffd00758711b7af6e4ca2cea01ad71d9"
+  },
+  "catatan": "Specialist tidak bergantung pada CNN/backbone; holdout tidak dipakai untuk pelatihan."
+}

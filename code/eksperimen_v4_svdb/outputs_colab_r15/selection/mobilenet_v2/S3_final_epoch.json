@@ -1,0 +1,31 @@
+{
+  "arch": "mobilenet_v2",
+  "scenario": "S3",
+  "rule": "argmax_mean_validation_macro_f1_common_epochs",
+  "tie_tolerance": 0.0001,
+  "selected_epoch": 2,
+  "selected_mean_macro_f1": 0.8751048736061404,
+  "common_epochs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "fold_checkpoint_sha256": {
+    "0": "7a280a3dd645574a0eb2d04fb1edc340599484eaf2f46e924e43af5fd096030d",
+    "1": "67f10ab633c2d64e892a43dd5ba15508109134102e6edbcddf3ab1fd9bdb1040",
+    "2": "e9342d226f82ab2854bd063cd3d2adaf3658718f398018e4b92fedda1bd9f4ed",
+    "3": "d943bcbc77a6ca9e3fd0de8b843cb6a873987660990ba6fd8dfe236a58d475dd",
+    "4": "8afa621f4dbcc4a3f9c4f257ba964db8fb74ea6e76acb975e20f38241608c05d"
+  },
+  "protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d",
+  "method_hash": "d7f73001bb35e08774efdbfb9bdb487fadf4dff0a7b3c5bcdc6df48966c71569"
+}

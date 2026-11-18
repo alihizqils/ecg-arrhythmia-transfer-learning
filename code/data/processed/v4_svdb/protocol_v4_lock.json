@@ -1,0 +1,132 @@
+{
+  "version": "v4_svdb",
+  "seed": 42,
+  "classes": [
+    "N",
+    "S",
+    "V",
+    "AF",
+    "VT"
+  ],
+  "windows": 26895,
+  "patients": 161,
+  "per_class": {
+    "N": 14413,
+    "S": 1411,
+    "V": 4012,
+    "AF": 5490,
+    "VT": 1569
+  },
+  "per_split": {
+    "development": 21636,
+    "holdout": 5259
+  },
+  "svdb_selected_records": [
+    "800",
+    "801",
+    "806",
+    "807",
+    "808",
+    "809",
+    "810",
+    "811",
+    "812",
+    "820",
+    "821",
+    "822",
+    "823",
+    "824",
+    "825",
+    "827",
+    "828",
+    "829",
+    "840",
+    "841",
+    "842",
+    "843",
+    "844",
+    "845",
+    "846",
+    "847",
+    "848",
+    "849",
+    "850",
+    "852",
+    "853",
+    "854",
+    "855",
+    "856",
+    "857",
+    "858",
+    "859",
+    "861",
+    "862",
+    "863",
+    "864",
+    "865",
+    "866",
+    "867",
+    "869",
+    "870",
+    "871",
+    "872",
+    "873",
+    "874",
+    "875",
+    "876",
+    "877",
+    "878",
+    "879",
+    "880",
+    "881",
+    "882",
+    "883",
+    "884",
+    "885",
+    "886",
+    "887",
+    "888",
+    "889",
+    "890",
+    "891",
+    "892",
+    "894"
+  ],
+  "control_old_databases": {
+    "old_windows_canonical": 24282,
+    "old_windows_v4": 23554,
+    "identical_classes": [
+      "AF",
+      "N",
+      "V",
+      "VT"
+    ],
+    "capped_classes": {
+      "S": [
+        1010,
+        282
+      ]
+    }
+  },
+  "holdout_selection": {
+    "candidate": 193,
+    "score": 0.018601779140058713
+  },
+  "fold_selection": {
+    "candidate": 77,
+    "score": 0.02518784131992429
+  },
+  "holdout_s_patients_by_source": {
+    "mitdb": 5,
+    "svdb": 13
+  },
+  "sha256": {
+    "configs/base.yaml": "710be86ce0f272286819f6df0279ad558f00eef38f58a7b47e51171fb31bb7e1",
+    "eksperimen_v4_svdb/protokol_v4.yaml": "e5887a2aea4fa0ce676386b7436e53df4c62f8d226b53ab131d3a0ed93ea25c3",
+    "eksperimen_v4_svdb/fase_b/buat_protokol.py": "7f57cd890440ad6a652f0ae0bcc12652ca05b80eac2b0b5c08fe37e0c924d3fe",
+    "label_manifest.csv": "a9394c5ee084071daf163b93942cbbc5358e7ab88b5c6c330eb32e4edcc626da",
+    "patient_assignment.csv": "28358c392e8d60119c56318163fa58434945da8e932cb58d8c187c147c63d967",
+    "svdb_raw_combined": "e30153dd08faf02fb815b79cdd2fe5e3d3c1958366a171f69597f66bc5c07fc4"
+  },
+  "holdout_used_for_selection": false
+}

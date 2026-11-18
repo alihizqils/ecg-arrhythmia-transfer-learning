@@ -1,0 +1,39 @@
+{
+  "arch": "shufflenet_v2_x1_0",
+  "scenario": "S2",
+  "rule": "argmax_mean_validation_macro_f1_common_epochs",
+  "tie_tolerance": 0.0001,
+  "selected_epoch": 9,
+  "selected_mean_macro_f1": 0.8736859399460848,
+  "common_epochs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "fold_checkpoint_sha256": {
+    "0": "299d9bb0821d43c5de354fe45fe1b34f908ba94f4e2ced3bf54b2d7328457bf8",
+    "1": "d7e644f9bf8bf4d42c675e8032767afa78522237230345bd5108a408b5f395e8",
+    "2": "34583d3d708990b12c8fbfd6aa5413de2786746241af4522784d8fa381324c0b",
+    "3": "d28003e2889b00b66b2aaea84d9451ac90ddc9a498d006b9566a213b42bfe9c2",
+    "4": "9dc435cbaa047a8d6f5b7ecaf1ef080d7a1a96c3b61ae0df62e9fab3083e9e6a"
+  },
+  "protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d",
+  "method_hash": "d7f73001bb35e08774efdbfb9bdb487fadf4dff0a7b3c5bcdc6df48966c71569"
+}

@@ -1,0 +1,51 @@
+{
+  "protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d",
+  "files": {
+    "eksperimen_v4_svdb/hierarchical_v4.yaml": "ce2f3c6800632898f1e9d68c9df972175df82777d08ecf70f707b2fa23bd99dc",
+    "eksperimen_v4_svdb/protokol_v4.yaml": "e5887a2aea4fa0ce676386b7436e53df4c62f8d226b53ab131d3a0ed93ea25c3",
+    "eksperimen_v4_svdb/v4_data.py": "133065b47b80cda8bc4ead910bc743efa1fc0b7d915f37de0b935551b28b7a09",
+    "configs/base.yaml": "710be86ce0f272286819f6df0279ad558f00eef38f58a7b47e51171fb31bb7e1",
+    "pilot_durasi_lokal/selected_local_window.json": "5dd821669adb4a59e3746230d8bad73acff2ac899230ef99acb274361d043698",
+    "src/ecgtl/hierarchical/__init__.py": "9809b8b9b96fe947abbb840e0d539c5a228c650adbf9a23091936237b4f22eae",
+    "src/ecgtl/hierarchical/data.py": "b3276b9e075f2d3c431c171b1b691f6473da9458b43704a0f4cd53a8e0977ebc",
+    "src/ecgtl/hierarchical/evaluation.py": "ebcd9e0c10c022c0a020e2e2442fc2ce042815c640565b8abf545ead80c4d611",
+    "src/ecgtl/hierarchical/explain.py": "30465331bc615c85d4cc16c27c08d75aef24d90d58cf74aff9f3500bae4aee5b",
+    "src/ecgtl/hierarchical/metrics.py": "7423b4755700bb60ccd8a82160183eb2f4d8a51f496967a24c4e4be78272e3fc",
+    "src/ecgtl/hierarchical/model.py": "02d687838302ef3ce47b594370356d372489e0c16da938a4896de28c88041363",
+    "src/ecgtl/hierarchical/protocol.py": "445219173abc2e6e841279103236ecdc5f182fbd430bab89e43bf3a7e36cc94b",
+    "src/ecgtl/hierarchical/training.py": "8858d19d297d80a4a1abb3aecab82998f7c4f8fe8d8c57efe678575714f04bea",
+    "src/ecgtl/hierarchical/visualization.py": "3a953f0ab69fd1b927fd6876620d2d921343d4b0628ae38d9762f4fdc6cde09b",
+    "src/ecgtl/data/segmentation.py": "30105fb624c4c77f0a23d569480e45f5c27dc36b2e97b3303367c6ff05c0af07",
+    "src/ecgtl/data/rendering.py": "70323b5c0e8da74fbd27732430ccfdb43602c169d1177eda5c01ed9c13644173",
+    "src/ecgtl/data/build_dataset.py": "16c0817c0a5a054b89da142d135e9d5bb25f9ca0b3bc5e128b3f37aa703d6f49",
+    "src/ecgtl/data/inventory.py": "59c403ebd0fbc20f36d2a16395e31083b85ed94dc508a8a33b9fda1748d22c6c",
+    "src/ecgtl/data/labeling.py": "525eb3a1bae954b7a303d445ef585c3a28566df24a7d86aebf5775e21695baf2",
+    "src/ecgtl/data/annotations.py": "1c06575bd7306e440d030d56f633a0c199008936ec36cf46515d4383208c67c0",
+    "source/manifest.csv": "6c6fb6fff3c05efda8ea1aecbaa3385bc9a824f9937c1ce8550a7c3ea0405113",
+    "source/patient_assignment.csv": "d278d1a7e8311c259b841b184b7c4ce0bb4c2d98183304f1e3113e8bcb7fea86",
+    "prepared/global_manifest.csv": "ce2ba341b4b99d802e2f317f79ed2b4a37a3b5329c62bc2fe095ea3aee80b4f5",
+    "prepared/local_manifest.csv": "9ae90b1600558e202f47c2aaa412214cb97966c70c8f527ee9785c676cb81f14",
+    "prepared/data_checksums.json": "00461e301502e9672abbd7b0b93e500d17179fdc4f39b6fbb627a8b755558527",
+    "prepared/distribution.csv": "4c9766c91477bc16712aa9bd11963a3450dfd9c1cc54e127f5b15b9228baba20",
+    "fase_b/protocol_v4_lock.json": "33e41e451a61a5174066f52a575527d327faae0c148a0b9eb839ce9f80b6e519"
+  },
+  "run_id": "hierarchical_10s_local_seed42_v4_svdb",
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "cuda": "12.4",
+    "packages": {
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "wfdb": "4.3.1",
+      "numpy": "2.5.2",
+      "scipy": "1.18.0",
+      "pandas": "3.0.5",
+      "scikit-learn": "1.9.0",
+      "shap": "0.52.0",
+      "matplotlib": "3.11.1",
+      "PyYAML": "6.0.3"
+    }
+  },
+  "commit": null
+}

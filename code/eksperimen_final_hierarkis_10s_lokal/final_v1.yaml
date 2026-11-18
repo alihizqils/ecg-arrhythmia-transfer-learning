@@ -1,0 +1,29 @@
+run_id: final_hierarchical_10s_local_seed42_v1
+seed: 42
+classes: [N, S, V, AF, VT]
+backbones: [efficientnet_b0, mobilenet_v2, shufflenet_v2_x1_0]
+scenarios: [S2, S3, S4]
+folds: 5
+method:
+  global_seconds: 10.0
+  local_samples: 312
+  local_nominal_seconds: 1.25
+  detector: gqrs
+  detector_offset_samples: 8
+  patient_balanced_sampling: true
+  nonlinear_local_fusion: true
+  lambda_global: 1.0
+  lambda_local: 1.0
+  s2_tau: 1.0
+  s3_tau: 2.0
+  s4_tau: 2.0
+  s4_trainable_feature_groups: 2
+  s4_batchnorm_running_statistics: frozen
+execution:
+  local_scenarios: [S2, S3]
+  colab_scenarios: [S4]
+  holdout_notebooks: ['04_rekap_hasil.ipynb']
+  final_epoch_rule: median_cv_best_epoch_round_half_up
+primary_metric: macro_f1
+selection_partition: development
+holdout_used_for_selection: false

@@ -1,0 +1,65 @@
+run_id: hierarchical_10s_local_seed42_v4_svdb
+seed: 42
+classes: [N, S, V, AF, VT]
+backbones: [efficientnet_b0, mobilenet_v2, shufflenet_v2_x1_0]
+scenarios: [S1, S2, S3, S4]
+data:
+  source: data/processed/v4_svdb/global
+  raw: data/raw
+  prepared: data/processed/v4_svdb/prepared
+  expected_windows: 26895
+  expected_patients: 161
+  expected_development_windows: 21636
+  expected_holdout_windows: 5259
+  expected_development_patients: 129
+  expected_holdout_patients: 32
+  folds: 5
+  split_candidates: 256
+  min_s_patients: 8
+  # Database dengan anotasi beat bertipe; label beat lokal development diambil dari sini.
+  beat_label_databases: [mitdb, svdb]
+  fs: 250
+  bandpass: {enabled: true, low_hz: 0.5, high_hz: 40.0, order: 4, zero_phase: true}
+  global_shape: [224, 448]
+  local_shape: [224, 224]
+  window_samples: 2500
+  crop_samples: 312
+  detector: gqrs
+  detector_offset: 8
+  tolerance_samples: 38
+  min_detector_f1: 0.95
+  min_class_recall: 0.90
+  aliases: {mitdb: {'201': 'mitdb/201+202', '202': 'mitdb/201+202'}}
+model:
+  grayscale_init: sum
+  dropout: 0.2
+  attention: class_wise
+  feature_chunk: 32
+training:
+  batch_size: 4
+  accumulation_steps: 8
+  feature_batch_size: 32
+  num_workers: 0
+  max_epochs: 60
+  patience: 10
+  weight_decay: 0.0001
+  lr_scratch: 0.001
+  lr_frozen: 0.001
+  lr_finetune_backbone: 0.00001
+  lr_finetune_head: 0.0001
+  lambda_global: 1.0
+  lambda_local: 1.0
+  tau_candidates: [1, 2, 5, 10, 20]
+  tie_tolerance: 0.0001
+  amp: true
+  gradient_checkpointing: true
+  deterministic: true
+benchmark:
+  device: cpu
+  threads: 2
+  warmup: 10
+  windows: 100
+shap:
+  background: 8
+  anchors_per_class: 1
+  nsamples: 100

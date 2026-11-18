@@ -1,0 +1,66 @@
+# Protokol eksperimen V4: data lama (mitdb, afdb, vfdb) + pasien kelas S dari SVDB.
+#
+# Berkas ini menimpa sebagian `configs/base.yaml`. Seluruh aturan preprocessing,
+# windowing, pelabelan, dan rendering tetap dari base.yaml tanpa perubahan.
+# Dasar keputusan seleksi SVDB: eksperimen_v4_svdb/fase_a/LAPORAN_FASE_A.md.
+version: v4_svdb
+seed: 42
+
+databases:
+  svdb:
+    expected_records: 78
+    expected_fs: 128
+    has_beat_annotations: true
+    annotation_ext: atr
+
+svdb_selection:
+  # Rekaman dipilih bila menghasilkan minimal sekian window S menurut pelabelan
+  # kanonik (sebelum batas per rekaman).
+  # Revisi 4 (4 Nov 2026, development, sebelum holdout dibuka): ambang 10 -> 1.
+  # Analisis kurva belajar menunjukkan F1 S naik dengan jumlah pasien S, bukan
+  # dengan jumlah window per pasien (datar setelah 10 window/pasien). Ambang 1
+  # memakai seluruh pasien SVDB yang memiliki window S (12 rekaman tambahan);
+  # semuanya lolos aturan ketidakteraturan RR dan QA detektor (F1 >= 0,98).
+  min_s_windows: 1
+  # Window N dari rekaman ini sangat tidak teratur (median |dRR|/median RR di atas
+  # persentil 99 window N mitdb pada >30% window N). SVDB tidak mempunyai anotasi
+  # ritme, sehingga window tersebut berisiko AF/aritmia tak beranotasi.
+  excluded_records: ["804", "826", "868", "893"]
+  exclusion_rule: n_window_rr_irregularity_gt_mitdb_n_p99_over_30pct
+
+sampling:
+  # Batas per rekaman per kelas. Database lama tetap memakai batas kanonik 200;
+  # SVDB dibatasi 20 agar menambah keragaman pasien tanpa membanjiri volume.
+  cap_per_database:
+    mitdb: 200
+    afdb: 200
+    vfdb: 200
+    svdb: 20
+  # Revisi 3 Nov 2026 (dari pilot development, sebelum holdout dibuka): kelas S
+  # dibatasi seragam 20 window per rekaman di semua database. Window S satu
+  # pasien sangat redundan (fokus ektopik yang sama); dengan batas 200, satu
+  # pasien mitdb dapat menyumbang >50% window S sebuah fold sehingga metrik
+  # tingkat window mencerminkan volume satu pasien, bukan generalisasi
+  # antarpasien. Batas efektif = min(batas database, batas kelas).
+  # Revisi 3 (3 Nov 2026): batas V=20 dicabut. Masalah dominasi satu pasien
+  # hanya terjadi pada S; batas V memangkas data V 66% dan menurunkan F1 V pada
+  # pilot (arsip: eksperimen_v4_svdb/arsip_vcap20/). N, AF, VT, V memakai batas
+  # kanonik.
+  cap_per_class:
+    S: 20
+
+split:
+  # Hold-out dan fold development sama-sama memakai algoritme alokasi pasien
+  # serakah protokol hierarkis (`ecgtl.hierarchical.data.assign_folds`), 256
+  # kandidat seed, dengan strata kelas dan sumber kelas S (S_mitdb / S_svdb).
+  # Hold-out = partisi 0 dari alokasi seluruh pasien ke 1/test_size partisi.
+  # Revisi 3 Nov 2026: StratifiedGroupKFold tingkat window sebelumnya hanya
+  # memberi 3 pasien VT pada hold-out; syarat pasien per kelas ditambahkan
+  # sebelum data dipakai (keputusan berbasis jumlah label, bukan hasil model).
+  test_size: 0.2
+  n_folds: 5
+  split_candidates: 256
+  min_holdout_patients_per_class: 5
+  min_holdout_s_patients_per_source: 3
+  min_s_patients_per_fold: 8
+  min_s_patients_per_source_per_fold: 3

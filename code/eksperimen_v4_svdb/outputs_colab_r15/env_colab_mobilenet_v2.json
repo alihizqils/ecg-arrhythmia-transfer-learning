@@ -1,0 +1,16 @@
+{
+  "python": "3.13.16",
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "gpu": "NVIDIA L4",
+  "vram_gb": 22.03,
+  "shap": "0.52.0",
+  "cpu": "x86_64",
+  "os": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "arch": "mobilenet_v2",
+  "bundel": "/content/drive/MyDrive/TA_R15_COLAB",
+  "lokal": "/content/ta",
+  "outputs": "/content/drive/MyDrive/TA_R15_hasil/outputs",
+  "bundel_dibuat": "2026-11-10T18:32:51",
+  "data_protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d"
+}

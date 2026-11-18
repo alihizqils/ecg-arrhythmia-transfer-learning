@@ -1,0 +1,67 @@
+{
+  "description": "Original SHA-256 of every file in the method hashes, as run. The official method hashes (d7f73001bb35, S3 44315f01cd18) are the hashes of exactly these files. Files listed under 'files' were edited after the runs only in full-line comments or the module docstring; their code_fingerprint (scripts/_fingerprint.py) is identical for the run version and the released version.",
+  "files": {
+    "code/eksperimen_v4_svdb/metode_v4.yaml": {
+      "original_sha256": "38c01b81a50590352282b5d171c15286431319c8ff956e2ae4f0066e37a89c19",
+      "code_fingerprint": "926d2d663fbb73482c918935a747bd8de1b6ee1f932607020d584e0efcdde7f8"
+    },
+    "code/eksperimen_v4_svdb/v4_local_rhythm.py": {
+      "original_sha256": "44b445d44f872b8d1dcb0417e57230c821f67c8b8396f1ec36118bb7d1a87a9b",
+      "code_fingerprint": "969d74002fffdc3de769dce69d491678c885ddd3699c7bc94ba56483e2b68de0"
+    },
+    "code/eksperimen_v4_svdb/fase_e_ns/fitur_ns.py": {
+      "original_sha256": "d9dc51d7f457d07d62b07ae120bf5842949539e0fa16142dc616d9abd222e9ce",
+      "code_fingerprint": "aa9448ea9076d7053cbf1b572fb06a5fcb87452c2f4c282483c3282e6fdbc083"
+    }
+  },
+  "method_files": [
+    "code/eksperimen_v4_svdb/metode_v4.yaml",
+    "code/eksperimen_v4_svdb/hierarchical_v4.yaml",
+    "code/eksperimen_v4_svdb/v4_pipeline.py",
+    "code/eksperimen_v4_svdb/v4_data.py",
+    "code/eksperimen_v4_svdb/v4_head.py",
+    "code/eksperimen_v4_svdb/v4_record_template.py",
+    "code/eksperimen_v4_svdb/v4_second_lead.py",
+    "code/eksperimen_v4_svdb/v4_local_rhythm.py",
+    "code/eksperimen_v4_svdb/fase_e_ns/fitur_ns.py",
+    "code/eksperimen_final_hierarkis_10s_lokal/final_pipeline.py",
+    "code/src/ecgtl/hierarchical/data.py",
+    "code/src/ecgtl/hierarchical/metrics.py",
+    "code/src/ecgtl/hierarchical/model.py",
+    "code/src/ecgtl/hierarchical/protocol.py",
+    "code/src/ecgtl/hierarchical/training.py",
+    "code/tools/a5_physiology.py",
+    "code/tools/a6_pb_nonlinear_fusion.py",
+    "code/tools/a6_wave_delineation.py",
+    "code/tools/rr_ablation_a4_sequence.py",
+    "code/tools/rr_ablation_a6_standalone.py"
+  ],
+  "s3_files": [
+    "code/eksperimen_v4_svdb/metode_v4_s3.yaml",
+    "code/eksperimen_v4_svdb/v4_s3.py"
+  ],
+  "original_sha256": {
+    "code/eksperimen_v4_svdb/metode_v4.yaml": "38c01b81a50590352282b5d171c15286431319c8ff956e2ae4f0066e37a89c19",
+    "code/eksperimen_v4_svdb/hierarchical_v4.yaml": "ce2f3c6800632898f1e9d68c9df972175df82777d08ecf70f707b2fa23bd99dc",
+    "code/eksperimen_v4_svdb/v4_pipeline.py": "6c5691f9e13a8b31e232c970845ff551c826b6a63bac6d32df17fa9261326729",
+    "code/eksperimen_v4_svdb/v4_data.py": "133065b47b80cda8bc4ead910bc743efa1fc0b7d915f37de0b935551b28b7a09",
+    "code/eksperimen_v4_svdb/v4_head.py": "88b2cf64c7599d6e2d3e82945d22ba4cc49642eefe6212e5ae666b237b30f582",
+    "code/eksperimen_v4_svdb/v4_record_template.py": "f2b2c0ecc4bff4527d14537a70c849ccd8a6980dc0022af05550f4b9dbc25a9c",
+    "code/eksperimen_v4_svdb/v4_second_lead.py": "5d3f0dde2efc6be9eede179964bf38c2ee8fc546d55a4205b59a7be93b3314be",
+    "code/eksperimen_v4_svdb/v4_local_rhythm.py": "44b445d44f872b8d1dcb0417e57230c821f67c8b8396f1ec36118bb7d1a87a9b",
+    "code/eksperimen_v4_svdb/fase_e_ns/fitur_ns.py": "d9dc51d7f457d07d62b07ae120bf5842949539e0fa16142dc616d9abd222e9ce",
+    "code/eksperimen_final_hierarkis_10s_lokal/final_pipeline.py": "d67a2610f3935c746652a7054048120fdc1030133c3aa73feaca4abc57e69b00",
+    "code/src/ecgtl/hierarchical/data.py": "b3276b9e075f2d3c431c171b1b691f6473da9458b43704a0f4cd53a8e0977ebc",
+    "code/src/ecgtl/hierarchical/metrics.py": "7423b4755700bb60ccd8a82160183eb2f4d8a51f496967a24c4e4be78272e3fc",
+    "code/src/ecgtl/hierarchical/model.py": "02d687838302ef3ce47b594370356d372489e0c16da938a4896de28c88041363",
+    "code/src/ecgtl/hierarchical/protocol.py": "445219173abc2e6e841279103236ecdc5f182fbd430bab89e43bf3a7e36cc94b",
+    "code/src/ecgtl/hierarchical/training.py": "8858d19d297d80a4a1abb3aecab82998f7c4f8fe8d8c57efe678575714f04bea",
+    "code/tools/a5_physiology.py": "d4c2abf452c5f338b0e4ce5a27118734fe11f8db018a3613ea02b14c70602064",
+    "code/tools/a6_pb_nonlinear_fusion.py": "0a53e5f22a50919dcc80c9768e21ec8019867a832ec3509273ba23ad1aaf9b2c",
+    "code/tools/a6_wave_delineation.py": "a491f2832525f07a74f866271694379d8e3c6502261da0d9357f750d7384ce64",
+    "code/tools/rr_ablation_a4_sequence.py": "2e64a4c6ad371f7e0526faa59b8a53813beb2fbef0026afb839e0b34cdf8eac8",
+    "code/tools/rr_ablation_a6_standalone.py": "8d534dc2dbad2a9db5b718980d7dbee6b877e9e77f5e1562e7e82b7a5461e7e1",
+    "code/eksperimen_v4_svdb/metode_v4_s3.yaml": "373e00822fc130fdf90d6a2ec1029c3e2bedebc2c652746052f494fb48455ac5",
+    "code/eksperimen_v4_svdb/v4_s3.py": "1a22eb455845c191e27ea1f53d7b95de137c025cbdd4f77fc5f7a882615e2d73"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "arch": "shufflenet_v2_x1_0",
+  "scenario": "S3",
+  "rule": "argmax_mean_validation_macro_f1_common_epochs",
+  "tie_tolerance": 0.0001,
+  "selected_epoch": 1,
+  "selected_mean_macro_f1": 0.8754617010336695,
+  "common_epochs": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "fold_checkpoint_sha256": {
+    "0": "42928617f54c0d251c91e2d85a225a12797c602a822c143d703d889f35aedd22",
+    "1": "7cbb573056c5c65b920e467228a8429bbc93e4374e90688ed716a9b86b6edd06",
+    "2": "ccfe5af9b562b3f8172b281b0ff9c27356a80a654708a2abf71de72de92ee762",
+    "3": "ff0dccd280587cbe45acbe026c0d7878e084e94f3e14dd7352aaacf5d330d8ce",
+    "4": "7f916af2e3f26216b2808ff7b5663a41856e47c7c1458b9b532dd78a0b0ba6d9"
+  },
+  "protocol_hash": "9db60710fd60433663bab15e1bbe3f61ba0b97cdf0ef59f0fc6531d5d510735d",
+  "method_hash": "d7f73001bb35e08774efdbfb9bdb487fadf4dff0a7b3c5bcdc6df48966c71569"
+}

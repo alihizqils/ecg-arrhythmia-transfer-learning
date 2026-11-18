@@ -1,0 +1,12 @@
+torch==2.6.0
+torchvision==0.21.0
+wfdb==4.3.1
+numpy==2.5.2
+scipy==1.18.0
+pandas==3.0.5
+scikit-learn==1.9.0
+shap==0.52.0
+matplotlib==3.11.1
+PyYAML==6.0.3
+tqdm==4.70.0
+psutil==7.2.2

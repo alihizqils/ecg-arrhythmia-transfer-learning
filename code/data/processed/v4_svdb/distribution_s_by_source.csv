@@ -1,0 +1,13 @@
+split,fold,database,windows,patients
+development,0,mitdb,42,3
+development,0,svdb,171,11
+development,1,mitdb,50,4
+development,1,svdb,188,11
+development,2,mitdb,41,4
+development,2,svdb,201,12
+development,3,mitdb,55,4
+development,3,svdb,176,11
+development,4,mitdb,53,3
+development,4,svdb,178,11
+holdout,-1,mitdb,41,5
+holdout,-1,svdb,215,13
