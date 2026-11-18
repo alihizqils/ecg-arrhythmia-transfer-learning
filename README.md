@@ -139,3 +139,9 @@ All paths are relative to `code/eksperimen_v4_svdb/outputs_colab_r15/`.
   year      = {2026}
 }
 ```
+
+## License
+
+The code in this repository is released under the [MIT License](LICENSE). The ECG recordings are not included;
+they remain under the licenses of their PhysioNet sources listed above. The code is intended for research and is
+not a medical device.
