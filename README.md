@@ -25,6 +25,7 @@ code/
     fase_e_ns/                 tabular features and beat-level specialist
     model_lengkap_data/        fitted beat-level specialist package (spesialis_r15.npz)
     outputs_colab_r15/         result tables and method/protocol locks of the official runs
+  eksperimen_incart/           external test on INCART (data preparation, 12-lead loader, inference)
   src/ecgtl/                   shared library (data preparation, rendering, hierarchical model)
   tools/                       feature modules used by the locked pipeline
   configs/                     base configuration
@@ -107,7 +108,12 @@ pip install -r requirements.txt
    `per_database.py`, `recall_per_source_cv.py`, `template_selection.py`, and `reproduce_final_s2.py`
    (bit-level reproduction check of the S2 final model). Test IDs in the result files: U3 image-only,
    U4 seeds, U5 random backbone, U6 learning curve, U2 leave-source-out, B4c tabular-only.
-6. **Efficiency.** `notebooks/analysis/05_benchmark_efisiensi_r15.ipynb` (`v4_benchmark.py`).
+6. **External test (INCART).** In `code/eksperimen_incart/`: `prepare_incart_data.py` labels and renders the
+   INCART windows with the same rules (leads II and V1, at most 20 windows per class per record; the result must
+   match `data/incart_windows.csv`), then `incart_external_test.py --template`, `incart_external_test.py`, and
+   `incart_external_test.py --ringkas` run inference with the final models. INCART was not used to train, select,
+   or tune the final models.
+7. **Efficiency.** `notebooks/analysis/05_benchmark_efisiensi_r15.ipynb` (`v4_benchmark.py`).
 
 Trained checkpoints and image caches are not included because of their size.
 
@@ -125,6 +131,7 @@ All paths are relative to `code/eksperimen_v4_svdb/outputs_colab_r15/`.
 | Epoch selection | `selection/<backbone>/S*_final_epoch*.{json,csv}` |
 | Leakage control and template sensitivity | `main_results/kontrol_kebocoran_*.csv`, `main_results/cv_sensitivitas_*.csv`, `additional_tests/b5_seleksi_template.csv` |
 | Per-database results and leave-source-out test | `main_results/per_database_holdout.csv`, `additional_tests/b3_per_database*.csv`, `additional_tests/analisis_colab/u2_recall_per_*.csv` |
+| External test (INCART) | `additional_tests/b2_incart/ringkas_incart.csv` |
 | Learning curve | `additional_tests/analisis_colab/ringkas_holdout.csv` (test `U6`) |
 | SHAP comparison | `main_results/banding_xai_effb0_s2.csv` |
 

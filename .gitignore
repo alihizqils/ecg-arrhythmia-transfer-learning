@@ -8,3 +8,6 @@ code/data/processed/v4_svdb/records/
 *.pt
 *.pth
 outputs/
+code/eksperimen_incart/data_v4_incart/
+code/eksperimen_incart/outputs_incart/
+code/eksperimen_incart/fitur/
